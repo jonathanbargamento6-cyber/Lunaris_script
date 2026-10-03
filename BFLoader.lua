@@ -31,7 +31,8 @@ if previous then previous:Destroy() end
 local SETTINGS = {
 	Title         = "𝘾𝙊𝙇𝙎 ✘ Void",
 	Subtitle      = "// VOID INTERFACE",
-	LogoId        = "rbxassetid://107391174248131",
+	LogoId        = "https://i.postimg.cc/9f7P3pvC/IMG-20261003-204025-591.jpg",
+	LogoFallback  = "rbxassetid://107391174248131",
 	ShowIntro     = true,
 	DesignSize    = Vector2.new(500, 360),
 	ScaleMin      = 0.6,
@@ -42,9 +43,7 @@ local SETTINGS = {
 }
 
 ------------------------------------------------------------------------
--- 2. FUNCTION ZONE  (put YOUR functions here)
---    Toggle = true  → button flips ON/OFF, callback receives true/false
---    Toggle = false → one-shot action button
+-- 2. FUNCTION ZONE
 ------------------------------------------------------------------------
 local function runRemote(name, fn)
 	local ok, err = pcall(fn)
@@ -199,7 +198,7 @@ local State = {
 
 local Refreshers   = {}
 local FontLabels   = setmetatable({}, { __mode = "k" })
-local KillTweens   = {}  -- tween cancellation registry
+local KillTweens   = {}
 
 local function getColor(role)
 	return State.Overrides[role] or THEMES[State.Theme][role]
@@ -300,7 +299,6 @@ local function label(parent, props, role, bold)
 	return l
 end
 
--- Scan-line sweep across a stroke. Thin bright band, dark shell.
 local function scanGradient(strokeObj, dynamic)
 	strokeObj.Color = WHITE
 	local g = make("UIGradient", { Rotation = 90 }, strokeObj)
@@ -320,7 +318,6 @@ local function scanGradient(strokeObj, dynamic)
 	return g
 end
 
--- Static shine band on text. Slower, subtler than before.
 local function shineGradient(textObj, role, dynamic)
 	textObj.TextColor3 = WHITE
 	local g = make("UIGradient", { Offset = Vector2.new(1, 0) }, textObj)
@@ -340,7 +337,6 @@ local function shineGradient(textObj, role, dynamic)
 	return g
 end
 
--- Sparse particles: thin vertical streaks, not dots.
 local function startParticles(container, count, alive, role)
 	for _ = 1, count do
 		local w = math.random(1, 2)
@@ -526,7 +522,6 @@ end
 ---------------------------------------------------------------- Top bar
 local DragZone = make("Frame", { Size = UDim2.new(0, DW - 60, 0, TOP_H), BackgroundTransparency = 1, Active = true }, Content)
 
--- Number badge on the left, like an index marker
 local badge = make("Frame", { Position = UDim2.fromOffset(14, 14), Size = UDim2.fromOffset(26, 26), BackgroundTransparency = 0.85 }, DragZone)
 bind(badge, "BackgroundColor3", "Accent")
 corner(badge, 4)
@@ -546,7 +541,6 @@ shineGradient(TitleLabel, "Accent", true)
 
 local SubLabel = label(DragZone, { Position = UDim2.fromOffset(titleX + 1, 30), Size = UDim2.new(0, 220, 0, 14), Text = SETTINGS.Subtitle, TextSize = 10, TextXAlignment = Enum.TextXAlignment.Left }, "Sub", false)
 
--- Corner grip marks (four small L brackets at the top edge)
 for _, s in ipairs({ {0, 0, 12, 1}, {0, 0, 1, 12}, {1, 0, 12, 1}, {1, 0, 1, 12} }) do
 	local ax, ay = s[1], s[2]
 	local w, h = s[3], s[4]
@@ -588,7 +582,6 @@ local TabsFrame = make("Frame", { Size = UDim2.fromScale(1, 1), BackgroundTransp
 padding(TabsFrame, 12, 14)
 make("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }, TabsFrame)
 
--- Rail index marker: thin vertical bar, no filled pill
 local Pill = make("Frame", { Position = UDim2.fromOffset(0, 14), Size = UDim2.fromOffset(2, 44), BackgroundTransparency = 0.1 }, PillLayer)
 bind(Pill, "BackgroundColor3", "Accent")
 corner(Pill, 1)
@@ -640,7 +633,7 @@ selectTab = function(name, instant)
 end
 
 ------------------------------------------------------------------------
--- 7. COMPONENTS: PAGES, BUTTONS, SLIDERS, CHIPS, CARDS
+-- 7. COMPONENTS
 ------------------------------------------------------------------------
 local function createPage(name, title, subtitle)
 	local page = make("Frame", { Name = name, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = false }, PagesHolder)
@@ -663,7 +656,6 @@ local function createPage(name, title, subtitle)
 	return page, scroll
 end
 
--- Card-style button: compact, index number on the left, small indicator on the right.
 local function createButton(parent, def)
 	local btn = { Toggle = def.Toggle ~= false, Callback = def.Callback, State = false, Hover = false }
 
@@ -677,22 +669,17 @@ local function createButton(parent, def)
 	corner(frame, 6)
 	local st = stroke(frame, 1, nil, 0.7)
 
-	-- Left accent stripe
 	local stripe = make("Frame", { AnchorPoint = Vector2.new(0, 0), Position = UDim2.new(0, 0, 0, 8), Size = UDim2.fromOffset(2, 46) }, frame)
 	bind(stripe, "BackgroundColor3", "Accent")
 	corner(stripe, 1)
 
-	-- Index number
 	local idxL = label(frame, { Position = UDim2.fromOffset(14, 10), Size = UDim2.fromOffset(24, 12), Text = string.format("%02d", def.Order or 1), TextSize = 10, TextXAlignment = Enum.TextXAlignment.Left }, "Sub", true)
 
-	-- Name
 	local nameL = label(frame, { Position = UDim2.fromOffset(14, 26), Size = UDim2.new(1, -50, 0, 20), Text = def.Name or "", TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left }, "Text", true)
 	sizeCap(nameL, 15)
 
-	-- Status line
 	local statusL = label(frame, { Position = UDim2.fromOffset(14, 44), Size = UDim2.new(1, -50, 0, 12), Text = "", TextSize = 9, TextXAlignment = Enum.TextXAlignment.Left }, "Sub", true)
 
-	-- LED dot on the right
 	local led = make("Frame", { AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0), Size = UDim2.fromOffset(6, 6) }, frame)
 	make("UICorner", { CornerRadius = UDim.new(0.5, 0) }, led)
 
@@ -865,7 +852,6 @@ local function createCard(parent, title, order, actionText, onAction)
 	make("UIListLayout", { Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }, card)
 	local row = make("Frame", { Size = UDim2.new(1, 0, 0, 30), BackgroundTransparency = 1, LayoutOrder = 0 }, card)
 
-	-- Left mini-marker for the card title
 	local tick = make("Frame", { AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 0, 0.5, 0), Size = UDim2.fromOffset(2, 14) }, row)
 	bind(tick, "BackgroundColor3", "Accent")
 
@@ -1063,12 +1049,11 @@ corner(LBtn, 4)
 local lStroke = stroke(LBtn, 1.5, "Accent", 0.2)
 scanGradient(lStroke, true)
 
--- Left rail on the launcher itself
 local lRail = make("Frame", { AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 4, 0.5, 0), Size = UDim2.fromOffset(2, 28) }, LBtn)
 bind(lRail, "BackgroundColor3", "Accent")
 
 if hasLogo then
-	local li = make("ImageLabel", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.new(1, -16, 1, -16), BackgroundTransparency = 1, Image = SETTINGS.LogoId, ScaleType = Enum.ScaleType.Fit }, LBtn)
+	local li = make("ImageLabel", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.new(1, -10, 1, -10), BackgroundTransparency = 1, Image = SETTINGS.LogoId, ScaleType = Enum.ScaleType.Fit }, LBtn)
 	make("UIAspectRatioConstraint", { AspectRatio = 1 }, li)
 	corner(li, 4)
 else
@@ -1152,7 +1137,6 @@ gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 	setLauncherPos(State.LPos, false)
 end)
 
--- Clean up infinite tweens on destroy
 gui.Destroying:Connect(function()
 	for _, tw in ipairs(KillTweens) do
 		pcall(function() tw:Cancel() end)
@@ -1182,7 +1166,6 @@ local function playIntro()
 	local ambient = make("Frame", { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 }, card)
 	startParticles(ambient, 10, function() return alive end, "Glow")
 
-	-- Corner brackets: four L shapes, sharp geometry
 	local brackets = {}
 	for _, c in ipairs({ { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } }) do
 		local ax, ay = c[1], c[2]
@@ -1263,11 +1246,6 @@ local COLSNV = {
 	SetTheme       = setTheme,
 	SetFont        = setFont,
 }
-
--- Example (uncomment to test):
--- COLSNV.Scripts[1]:SetCallback(function(active)
--- 	print("card 1:", active)
--- end)
 
 task.spawn(function()
 	if SETTINGS.ShowIntro then
