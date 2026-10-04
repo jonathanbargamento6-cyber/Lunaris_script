@@ -31,8 +31,8 @@ if previous then previous:Destroy() end
 local SETTINGS = {
 	Title         = "V O I D   S C R I P T   L O A D E R",
 	Subtitle      = "// VOID INTERFACE  ·  BY COLS",
-	LogoId        = ""
-	LogoFallback  = "rbxassetid://107391174248131",
+	LogoId        = "",
+	LogoFallback  = "",
 	ShowIntro     = true,
 	DesignSize    = Vector2.new(520, 380),
 	ScaleMin      = 0.6,
