@@ -31,7 +31,7 @@ if previous then previous:Destroy() end
 local SETTINGS = {
 	Title         = "V O I D   S C R I P T   L O A D E R",
 	Subtitle      = "// VOID INTERFACE  ·  BY COLS",
-	LogoId        = "https://i.postimg.cc/9f7P3pvC/IMG-20261003-204025-591.jpg",
+	LogoId        = ""
 	LogoFallback  = "rbxassetid://107391174248131",
 	ShowIntro     = true,
 	DesignSize    = Vector2.new(520, 380),
